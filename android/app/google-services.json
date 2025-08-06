@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1013028631635",
+    "project_id": "chronotimer-1a45d",
+    "storage_bucket": "chronotimer-1a45d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1013028631635:android:4090045b32e6d2f75102a6",
+        "android_client_info": {
+          "package_name": "com.example.chronotimer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdUyFxb3Ze5kVdJJxh9q3JX3QCCocYCb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
