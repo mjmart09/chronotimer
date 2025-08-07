@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/preajuste_tiempos.dart';
 import '../states/estados_preajustes.dart';
+import 'package:uuid/uuid.dart';
+
 
 class PantallaCrearEditar extends StatefulWidget {
   final TiempoPreajuste? preajusteParaEditar;
 
-  const PantallaCrearEditar({
-    super.key,
-    this.preajusteParaEditar,
-  });
+  const PantallaCrearEditar({super.key, this.preajusteParaEditar});
 
   @override
   State<PantallaCrearEditar> createState() => _PantallaCrearEditarState();
@@ -18,14 +17,14 @@ class PantallaCrearEditar extends StatefulWidget {
 class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
   final _formKey = GlobalKey<FormState>();
   final _nombreController = TextEditingController();
-  
+
   // Controladores para los campos numéricos
   int _preparacionTiempo = 10;
   int _sets = 5;
   int _trabajoTiempo = 30;
   int _descansoTiempo = 15;
   int _enfriamientoTiempo = 60;
-  
+
   bool _guardando = false;
   bool get _esEdicion => widget.preajusteParaEditar != null;
 
@@ -54,10 +53,10 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
   }
 
   int _calcularTiempoTotal() {
-    return _preparacionTiempo + 
-           (_sets * _trabajoTiempo) + 
-           ((_sets - 1) * _descansoTiempo) + 
-           _enfriamientoTiempo;
+    return _preparacionTiempo +
+        (_sets * _trabajoTiempo) +
+        ((_sets - 1) * _descansoTiempo) +
+        _enfriamientoTiempo;
   }
 
   String _formatearTiempo(int segundos) {
@@ -70,14 +69,14 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
   @override
   Widget build(BuildContext context) {
     final tiempoTotal = _calcularTiempoTotal();
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_esEdicion ? 'Editar Preajuste' : 'Nuevo Preajuste'),
         backgroundColor: const Color(0xFF1A2A80),
         foregroundColor: Colors.white,
       ),
-      
+
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -139,7 +138,9 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
               const SizedBox(height: 24),
 
               // Campos numéricos simplificados
-              _construirCampoNumerico('Preparación (seg)', _preparacionTiempo, (valor) {
+              _construirCampoNumerico('Preparación (seg)', _preparacionTiempo, (
+                valor,
+              ) {
                 setState(() => _preparacionTiempo = valor);
               }),
 
@@ -151,13 +152,19 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
                 setState(() => _trabajoTiempo = valor);
               }),
 
-              _construirCampoNumerico('Descanso (seg)', _descansoTiempo, (valor) {
+              _construirCampoNumerico('Descanso (seg)', _descansoTiempo, (
+                valor,
+              ) {
                 setState(() => _descansoTiempo = valor);
               }),
 
-              _construirCampoNumerico('Enfriamiento (seg)', _enfriamientoTiempo, (valor) {
-                setState(() => _enfriamientoTiempo = valor);
-              }),
+              _construirCampoNumerico(
+                'Enfriamiento (seg)',
+                _enfriamientoTiempo,
+                (valor) {
+                  setState(() => _enfriamientoTiempo = valor);
+                },
+              ),
 
               const SizedBox(height: 32),
 
@@ -171,14 +178,14 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6)
+                      borderRadius: BorderRadius.circular(6),
                     ),
                   ),
                   child: Text(
-                    _guardando 
-                      ? 'Guardando...' 
-                      : _esEdicion 
-                        ? 'Actualizar' 
+                    _guardando
+                        ? 'Guardando...'
+                        : _esEdicion
+                        ? 'Actualizar'
                         : 'Crear Preajuste',
                     style: const TextStyle(fontSize: 18),
                   ),
@@ -191,7 +198,12 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
     );
   }
 
-  Widget _construirCampoNumerico(String titulo, int valor, Function(int) onChanged) {
+  Widget _construirCampoNumerico(
+    
+    String titulo,
+    int valor,
+    Function(int) onChanged,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -237,21 +249,22 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
     setState(() => _guardando = true);
 
     try {
-      final proveedor = Provider.of<ProveedorPreajustes>(context, listen: false);
-      
+      final proveedor = Provider.of<ProveedorPreajustes>(
+        context,
+        listen: false,
+      );
+
       final preajuste = TiempoPreajuste(
-        id: _esEdicion 
-          ? widget.preajusteParaEditar!.id 
-          : DateTime.now().millisecondsSinceEpoch.toString(),
+        id: _esEdicion ? widget.preajusteParaEditar!.id : const Uuid().v4(),
         nombrePreajuste: _nombreController.text.trim(),
         preparacionTiempo: _preparacionTiempo,
         sets: _sets,
         trabajoTiempo: _trabajoTiempo,
         descansoTiempo: _descansoTiempo,
         enfriamientoTiempo: _enfriamientoTiempo,
-        fechaCreacion: _esEdicion 
-          ? widget.preajusteParaEditar!.fechaCreacion 
-          : DateTime.now(),
+        fechaCreacion: _esEdicion
+            ? widget.preajusteParaEditar!.fechaCreacion
+            : DateTime.now(),
       );
 
       bool resultado;
@@ -266,9 +279,11 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              resultado 
-                ? (_esEdicion ? 'Actualizado exitosamente' : 'Creado exitosamente')
-                : 'Error al guardar',
+              resultado
+                  ? (_esEdicion
+                        ? 'Actualizado exitosamente'
+                        : 'Creado exitosamente')
+                  : 'Error al guardar',
             ),
             backgroundColor: resultado ? Colors.green : Colors.red,
           ),
@@ -277,10 +292,7 @@ class _PantallaCrearEditarState extends State<PantallaCrearEditar> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {

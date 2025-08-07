@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class TiempoPreajuste {
-  
   // identificador unico
   final String id;
 
@@ -29,7 +28,6 @@ class TiempoPreajuste {
   // cuando se creo el preajuste
   final DateTime fechaCreacion;
 
-  
   // Constructor -> crea nuevos preajustes
   // Todos son obligatorios
   TiempoPreajuste({
@@ -54,7 +52,7 @@ class TiempoPreajuste {
       'trabajoTiempo': trabajoTiempo,
       'descansoTiempo': descansoTiempo,
       'enfriamientoTiempo': enfriamientoTiempo,
-      'fechaCreacion': fechaCreacion.millisecondsSinceEpoch,
+      'fechaCreacion': Timestamp.fromDate(fechaCreacion),
     };
   }
 
@@ -78,12 +76,13 @@ class TiempoPreajuste {
   int obtenerDuracionTotal() {
     // Preparacion + (Sets * (Trabajo + Descanso)) + Enfriamiento
     return preparacionTiempo +
-           (sets * trabajoTiempo) +
-           ((sets - 1) * descansoTiempo) + // -1 porque despues de la ultima ronda no hay descanso
-           enfriamientoTiempo;
+        (sets * trabajoTiempo) +
+        ((sets - 1) *
+            descansoTiempo) + // -1 porque despues de la ultima ronda no hay descanso
+        enfriamientoTiempo;
   }
 
-  // Copia del preajuste 
+  // Copia del preajuste
   // para editar los que ya tiene
   TiempoPreajuste copyWith({
     String? id,
